@@ -16,13 +16,10 @@ function Gopher(image) {
 
   this.drawing.style.left = image.offsetLeft + "px";
   this.drawing.style.top = image.offsetTop + "px";
-  window.addEventListener(
-    "resize",
-    function() {
-      this.drawing.style.left = image.offsetLeft + "px";
-      this.drawing.style.top = image.offsetTop + "px";
-    }.bind(this)
-  );
+  window.addEventListener("resize", () => {
+    this.drawing.style.left = image.offsetLeft + "px";
+    this.drawing.style.top = image.offsetTop + "px";
+  });
 
   this.svg = SVG(this.drawing);
   this.svg.svg(svgData);
@@ -68,15 +65,17 @@ function Gopher(image) {
     .maskWith(this.rightEye.clone().attr({fill: "#fff"}));
 
   this.drawing.addEventListener("click", this.stare.bind(this));
-  window.addEventListener("mousemove", this.handleMouseMove.bind(this));
+  window.addEventListener("mousemove", () => {
+    this.handleMouseMove();
+  });
   this.startWave();
   this.startTwitch();
   this.startBlink();
 }
 
 Gopher.prototype.twitch = function() {
-  var x = this.leftEye.x();
-  var y = this.leftEye.cy();
+  const x = this.leftEye.x();
+  const y = this.leftEye.cy();
   this.llEyelid
     .finish()
     .animate(100)
@@ -91,20 +90,18 @@ Gopher.prototype.twitch = function() {
     .move(x, y)
     .animate(100)
     .move(x, y + 20)
-    .after(
-      function() {
-        if (this.staring) {
-          this.llEyelid.animate(50).move(x, y + 5);
-        }
-      }.bind(this)
-    );
+    .after(() => {
+      if (this.staring) {
+        this.llEyelid.animate(50).move(x, y + 5);
+      }
+    });
 };
 
 Gopher.prototype.blink = function() {
-  var lx = this.leftEye.x();
-  var ly = this.leftEye.cy();
-  var rx = this.rightEye.x();
-  var ry = this.rightEye.cy();
+  const lx = this.leftEye.x();
+  const ly = this.leftEye.cy();
+  const rx = this.rightEye.x();
+  const ry = this.rightEye.cy();
   this.staring = false;
 
   this.llEyelid
@@ -139,10 +136,10 @@ Gopher.prototype.blink = function() {
 Gopher.prototype.stare = function() {
   this.staring = true;
   this.resetBlinkTimer();
-  var lx = this.leftEye.x();
-  var ly = this.leftEye.cy();
-  var rx = this.rightEye.x();
-  var ry = this.rightEye.cy();
+  const lx = this.leftEye.x();
+  const ly = this.leftEye.cy();
+  const rx = this.rightEye.x();
+  const ry = this.rightEye.cy();
   this.moveEyes(this.leftEye.cx(), this.leftEye.cy());
   this.llEyelid.animate(100).move(lx, ly + 5);
   this.ulEyelid.animate(100).move(lx, ly - 50);
@@ -151,8 +148,8 @@ Gopher.prototype.stare = function() {
 };
 
 Gopher.prototype.wave = function(hand) {
-  var handX = this.rightHand.x();
-  var handY = this.rightHand.y();
+  const handX = this.rightHand.x();
+  const handY = this.rightHand.y();
   this.moveEyes(this.leftEye.cx(), this.leftEye.cy());
   this.rightHand
     .finish()
@@ -169,10 +166,10 @@ Gopher.prototype.wave = function(hand) {
 Gopher.prototype.handleMouseMove = function(event) {
   // Calculate the position of the mouse in coordinates local to the SVG,
   // rather than the global page coordinates.
-  var scaleX = this.gopher.viewbox().width / this.svg.viewbox().width;
-  var scaleY = this.gopher.viewbox().height / this.svg.viewbox().height;
-  var localX = (event.pageX - this.drawing.offsetLeft) * scaleX;
-  var localY = (event.pageY - this.drawing.offsetTop) * scaleY;
+  const scaleX = this.gopher.viewbox().width / this.svg.viewbox().width;
+  const scaleY = this.gopher.viewbox().height / this.svg.viewbox().height;
+  const localX = (event.pageX - this.drawing.offsetLeft) * scaleX;
+  const localY = (event.pageY - this.drawing.offsetTop) * scaleY;
 
   // Make the eyes look at the cursor if it's close enough.
   if (
@@ -189,29 +186,20 @@ Gopher.prototype.moveEyes = function(targetX, targetY, dur) {
     dur = 50;
   }
 
-  var lcx = this.leftEye.cx();
-  var lcy = this.leftEye.cy();
-  var ldx = targetX - lcx;
-  var ldy = targetY - lcy;
-  var ll = Math.sqrt(ldx * ldx + ldy * ldy);
-  var lnx = ldx / ll;
-  var lny = ldy / ll;
-  if (ll === 0) {
-    lnx = 0;
-    lny = 0;
-  }
-
-  var rcx = this.rightEye.cx();
-  var rcy = this.rightEye.cy();
-  var rdx = targetX - rcx;
-  var rdy = targetY - rcy;
-  var rl = Math.sqrt(rdx * rdx + rdy * rdy);
-  var rnx = rdx / rl;
-  var rny = rdy / rl;
-  if (rl === 0) {
-    rnx = 0;
-    rny = 0;
-  }
+  const lcx = this.leftEye.cx();
+  const lcy = this.leftEye.cy();
+  const ldx = targetX - lcx;
+  const ldy = targetY - lcy;
+  const ll = Math.sqrt(ldx * ldx + ldy * ldy);
+  const lnx = ll === 0 ? 0 : ldx / ll;
+  const lny = ll === 0 ? 0 : ldy / ll;
+  const rcx = this.rightEye.cx();
+  const rcy = this.rightEye.cy();
+  const rdx = targetX - rcx;
+  const rdy = targetY - rcy;
+  const rl = Math.sqrt(rdx * rdx + rdy * rdy);
+  const rnx = rl === 0 ? 0 : rdx / rl;
+  const rny = rl === 0 ? 0 : rdy / rl;
 
   this.leftPupil
     .stop()
@@ -237,12 +225,12 @@ Gopher.prototype.moveEyes = function(targetX, targetY, dur) {
 };
 
 Gopher.prototype.moveEyesRandomly = function() {
-  var circleRadius = 400;
-  var randomAngle = randomRange(0, 2 * Math.PI);
-  var randomRadius = Math.sqrt(Math.random()) * circleRadius;
-  var x = Math.cos(randomAngle) * randomRadius;
-  var y = Math.sin(randomAngle) * randomRadius;
-  var dur = randomRange(5, 600);
+  const circleRadius = 400;
+  const randomAngle = randomRange(0, 2 * Math.PI);
+  const randomRadius = Math.sqrt(Math.random()) * circleRadius;
+  const x = Math.cos(randomAngle) * randomRadius;
+  const y = Math.sin(randomAngle) * randomRadius;
+  const dur = randomRange(5, 600);
   if (!this.staring) {
     this.moveEyes(x, y, dur);
   }
@@ -281,12 +269,12 @@ Gopher.prototype.startWave = function() {
   if (this.waveTimeout) {
     clearTimeout(this.waveTimeout);
   }
-  var waveDelay = Math.floor(randomRange(3, 21) * 1000);
+  const waveDelay = Math.floor(randomRange(3, 21) * 1000);
   this.waveTimeout = setTimeout(this.startWave.bind(this), waveDelay);
 };
 
-window.addEventListener("load", function() {
-  var image = document.querySelector("img[data-gopher]");
+window.addEventListener("load", () => {
+  const image = document.querySelector("img[data-gopher]");
   if (image) {
     new Gopher(image);
   }
