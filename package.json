@@ -17,6 +17,8 @@
     "svgjs": "^2.6.2"
   },
   "scripts": {
+    "gh-pages":
+      "git checkout gh-pages && git merge master && sed -i '' -e '/^dist$/d' .gitignore && yarn run build && git add dist .gitignore && git commit -m 'Updates GitHub pages' && git push origin gh-pages",
     "clean": "rm -r dist",
     "prepublishOnly": "npm run build",
     "build": "npm run build-dev && npm run build-prod",
