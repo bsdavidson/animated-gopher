@@ -12,7 +12,7 @@ function Gopher(image) {
   this.drawing.title = "Go";
   this.drawing.className = "tool";
   this.drawing.style.position = "absolute";
-  document.body.appendChild(this.drawing);
+  image.insertAdjacentElement("beforebegin", this.drawing);
 
   this.drawing.style.left = image.offsetLeft + "px";
   this.drawing.style.top = image.offsetTop + "px";
@@ -65,8 +65,8 @@ function Gopher(image) {
     .maskWith(this.rightEye.clone().attr({fill: "#fff"}));
 
   this.drawing.addEventListener("click", this.stare.bind(this));
-  window.addEventListener("mousemove", () => {
-    this.handleMouseMove();
+  window.addEventListener("mousemove", (event) => {
+    this.handleMouseMove(event);
   });
   this.startWave();
   this.startTwitch();
